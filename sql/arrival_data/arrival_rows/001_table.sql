@@ -59,6 +59,9 @@ BEGIN
         StatusID int NULL,
         Container nvarchar(100) NULL,
 
+        HasComment bit NOT NULL
+            CONSTRAINT DF_ArrivalRowsUnreleased_HasComment DEFAULT ((0)),
+
         CONSTRAINT PK_ArrivalRowsUnreleased
             PRIMARY KEY CLUSTERED (ID),
 

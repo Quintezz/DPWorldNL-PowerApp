@@ -79,7 +79,8 @@ INSERT INTO dbo.ArrivalRowsUnreleased
     Bonded,
     Released,
     StatusID,
-    Container
+    Container,
+    HasComment
 )
 SELECT
     h.ID AS ParentHeaderDbID,
@@ -125,7 +126,8 @@ SELECT
     CASE WHEN n.RowSequence IN (3,7,10) THEN 1 ELSE 0 END AS Bonded,
     0 AS Released,
     1 AS StatusID,
-    CONCAT(N'CONT-', h.SecurityReference, N'-', RIGHT(N'00' + CAST(n.RowSequence AS nvarchar(2)), 2)) AS Container
+    CONCAT(N'CONT-', h.SecurityReference, N'-', RIGHT(N'00' + CAST(n.RowSequence AS nvarchar(2)), 2)) AS Container,
+    0 AS HasComment
 FROM HeaderSet h
 INNER JOIN RowNumbers n
     ON n.RowSequence <= h.RowsPerHeader
@@ -153,7 +155,8 @@ SELECT TOP (25)
     r.Bonded,
     r.Released,
     r.StatusID,
-    r.Container
+    r.Container,
+    r.HasComment
 FROM dbo.ArrivalRowsUnreleased r
 INNER JOIN dbo.ArrivalHeadersUnreleased h
     ON h.ID = r.ParentHeaderDbID
