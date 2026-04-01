@@ -59,6 +59,7 @@ A row may only exist if a valid parent header already exists.
 | `ModifiedAt` | `datetime2` | Set by SQL Server on insert in this phase |
 | `StatusID` | `int` | FK-based status column for row status |
 | `Container` | `nvarchar(100)` | Container or grouping reference |
+| `HasComment` | `bit` | Helper flag indicating whether a comment is linked to this row |
 
 ---
 
@@ -89,6 +90,7 @@ So if `HeaderRecordID = 0000000123`, then example row IDs are:
 - `RowID` must be unique across all rows.
 - `Released` is stored on the row.
 - `StatusID` is stored as an integer lookup-based status field.
+- `HasComment` is a helper flag, same concept as the header model. In this phase it defaults to `0` and automatic maintenance is not yet implemented.
 - `CreatedAt` is set by SQL Server on insert.
 - `ModifiedAt` is set by SQL Server on insert in this phase; automatic update maintenance is not yet implemented in this phase.
 
