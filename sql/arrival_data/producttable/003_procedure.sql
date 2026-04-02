@@ -9,7 +9,7 @@ BEGIN
         THROW 50001, 'Parameter @RowsJson bevat geen geldige JSON.', 1;
     END;
 
-    INSERT INTO dbo.ProductTableImport
+    INSERT INTO dbo.ProductTable
     (
         ItemInternalId,
         PartNo,
@@ -33,3 +33,4 @@ BEGIN
         VendorPartNo   NVARCHAR(255)  '$.VendorPartNo'
     ) AS j;
 END;
+GO
