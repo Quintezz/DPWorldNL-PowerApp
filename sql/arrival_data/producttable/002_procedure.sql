@@ -3,5 +3,6 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    TRUNCATE TABLE dbo.ProductTableImport;
+    TRUNCATE TABLE dbo.ProductTable;
 END;
+GO
