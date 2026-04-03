@@ -1,6 +1,6 @@
 /*
 ===============================================================================
-  dbo.ProductTableFull
+  dbo.ProductTable
   Volledige importtabel voor ProductTable Excel dump
 ===============================================================================
 */
@@ -8,15 +8,15 @@
 SET NOCOUNT ON;
 GO
 
-IF OBJECT_ID('dbo.ProductTableFull', 'U') IS NOT NULL
+IF OBJECT_ID('dbo.ProductTable', 'U') IS NOT NULL
 BEGIN
-    DROP TABLE dbo.ProductTableFull;
+    DROP TABLE dbo.ProductTable;
 END
 GO
 
-CREATE TABLE dbo.ProductTableFull
+CREATE TABLE dbo.ProductTable
 (
-    ProductTableFullID      BIGINT IDENTITY(1,1) NOT NULL,
+    ProductTableID      BIGINT IDENTITY(1,1) NOT NULL,
     ItemInternalId          NVARCHAR(100)        NULL,
     PartNo                  NVARCHAR(100)        NULL,
     Description             NVARCHAR(500)        NULL,
@@ -74,21 +74,21 @@ CREATE TABLE dbo.ProductTableFull
     OptionsPart             NVARCHAR(50)         NULL,
 
     CreatedAt               DATETIME2(0)         NOT NULL
-        CONSTRAINT DF_ProductTableFull_CreatedAt DEFAULT (SYSDATETIME()),
+        CONSTRAINT DF_ProductTable_CreatedAt DEFAULT (SYSDATETIME()),
 
-    CONSTRAINT PK_ProductTableFull
-        PRIMARY KEY CLUSTERED (ProductTableFullID)
+    CONSTRAINT PK_ProductTable
+        PRIMARY KEY CLUSTERED (ProductTableID)
 );
 GO
 
-CREATE INDEX IX_ProductTableFull_PartNo
-    ON dbo.ProductTableFull (PartNo);
+CREATE INDEX IX_ProductTable_PartNo
+    ON dbo.ProductTable (PartNo);
 GO
 
-CREATE INDEX IX_ProductTableFull_Vendor
-    ON dbo.ProductTableFull (Vendor);
+CREATE INDEX IX_ProductTable_Vendor
+    ON dbo.ProductTable (Vendor);
 GO
 
-CREATE INDEX IX_ProductTableFull_ItemInternalId
-    ON dbo.ProductTableFull (ItemInternalId);
+CREATE INDEX IX_ProductTable_ItemInternalId
+    ON dbo.ProductTable (ItemInternalId);
 GO
