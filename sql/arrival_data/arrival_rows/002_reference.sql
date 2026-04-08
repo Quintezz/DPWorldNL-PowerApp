@@ -7,7 +7,7 @@
     - dbo.ArrivalRowsUnreleased
 
   In scope:
-    - dbo.ArrivalRowStatuses
+    - dbo.ArrivalRowStatus
 
   Also:
     - adds missing foreign key on dbo.ArrivalRowsUnreleased.StatusID
@@ -17,41 +17,41 @@
 SET NOCOUNT ON
 
 -------------------------------------------------------------------------------
--- 1. Create dbo.ArrivalRowStatuses
+-- 1. Create dbo.ArrivalRowStatus
 -------------------------------------------------------------------------------
-IF OBJECT_ID('dbo.ArrivalRowStatuses', 'U') IS NULL
+IF OBJECT_ID('dbo.ArrivalRowStatus', 'U') IS NULL
 BEGIN
-    CREATE TABLE dbo.ArrivalRowStatuses
+    CREATE TABLE dbo.ArrivalRowStatus
     (
         ID int IDENTITY(1,1) NOT NULL,
         Code nvarchar(50) NOT NULL,
         Name nvarchar(100) NOT NULL,
         IsActive bit NOT NULL
-            CONSTRAINT DF_ArrivalRowStatuses_IsActive DEFAULT ((1)),
+            CONSTRAINT DF_ArrivalRowStatus_IsActive DEFAULT ((1)),
         SortOrder int NULL,
 
-        CONSTRAINT PK_ArrivalRowStatuses
+        CONSTRAINT PK_ArrivalRowStatus
             PRIMARY KEY CLUSTERED (ID),
 
-        CONSTRAINT UQ_ArrivalRowStatuses_Code
+        CONSTRAINT UQ_ArrivalRowStatus_Code
             UNIQUE (Code),
 
-        CONSTRAINT UQ_ArrivalRowStatuses_Name
+        CONSTRAINT UQ_ArrivalRowStatus_Name
             UNIQUE (Name)
     )
 END
 
 -------------------------------------------------------------------------------
--- 2. Seed dbo.ArrivalRowStatuses
+-- 2. Seed dbo.ArrivalRowStatus
 -------------------------------------------------------------------------------
-IF OBJECT_ID('dbo.ArrivalRowStatuses', 'U') IS NOT NULL
+IF OBJECT_ID('dbo.ArrivalRowStatus', 'U') IS NOT NULL
 BEGIN
-    UPDATE dbo.ArrivalRowStatuses
+    UPDATE dbo.ArrivalRowStatus
     SET Code      = src.Code,
         Name      = src.Name,
         IsActive  = src.IsActive,
         SortOrder = src.SortOrder
-    FROM dbo.ArrivalRowStatuses tgt
+    FROM dbo.ArrivalRowStatus tgt
     INNER JOIN
     (
         SELECT 1 AS ID, N'DRAFT'     AS Code, N'Draft'     AS Name, CAST(1 AS bit) AS IsActive, 1 AS SortOrder
@@ -66,9 +66,9 @@ BEGIN
     ) src
         ON tgt.ID = src.ID
 
-    SET IDENTITY_INSERT dbo.ArrivalRowStatuses ON
+    SET IDENTITY_INSERT dbo.ArrivalRowStatus ON
 
-    INSERT INTO dbo.ArrivalRowStatuses
+    INSERT INTO dbo.ArrivalRowStatus
     (
         ID,
         Code,
@@ -97,27 +97,27 @@ BEGIN
     WHERE NOT EXISTS
     (
         SELECT 1
-        FROM dbo.ArrivalRowStatuses tgt
+        FROM dbo.ArrivalRowStatus tgt
         WHERE tgt.ID = src.ID
     )
 
-    SET IDENTITY_INSERT dbo.ArrivalRowStatuses OFF
+    SET IDENTITY_INSERT dbo.ArrivalRowStatus OFF
 END
 
 -------------------------------------------------------------------------------
 -- 3. Add missing foreign key to dbo.ArrivalRowsUnreleased
 -------------------------------------------------------------------------------
 IF OBJECT_ID('dbo.ArrivalRowsUnreleased', 'U') IS NOT NULL
-   AND OBJECT_ID('dbo.ArrivalRowStatuses', 'U') IS NOT NULL
+   AND OBJECT_ID('dbo.ArrivalRowStatus', 'U') IS NOT NULL
    AND NOT EXISTS
    (
        SELECT 1
        FROM sys.foreign_keys
-       WHERE name = 'FK_ArrivalRowsUnreleased_ArrivalRowStatuses'
+       WHERE name = 'FK_ArrivalRowsUnreleased_ArrivalRowStatus'
    )
 BEGIN
     ALTER TABLE dbo.ArrivalRowsUnreleased
-    ADD CONSTRAINT FK_ArrivalRowsUnreleased_ArrivalRowStatuses
+    ADD CONSTRAINT FK_ArrivalRowsUnreleased_ArrivalRowStatus
         FOREIGN KEY (StatusID)
-        REFERENCES dbo.ArrivalRowStatuses (ID)
+        REFERENCES dbo.ArrivalRowStatus (ID)
 END

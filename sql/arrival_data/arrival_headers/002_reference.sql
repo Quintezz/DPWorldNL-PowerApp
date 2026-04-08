@@ -11,7 +11,7 @@
     - dbo.LoadTypes
     - dbo.Sites
     - dbo.ReceivingDepartments
-    - dbo.ArrivalHeaderStatuses
+    - dbo.ArrivalHeaderStatus
 
   Also:
     - adds missing foreign keys on dbo.ArrivalHeadersUnreleased if that table
@@ -110,26 +110,26 @@ BEGIN
 END;
 
 -------------------------------------------------------------------------------
--- 5. Create dbo.ArrivalHeaderStatuses
+-- 5. Create dbo.ArrivalHeaderStatus
 -------------------------------------------------------------------------------
-IF OBJECT_ID('dbo.ArrivalHeaderStatuses', 'U') IS NULL
+IF OBJECT_ID('dbo.ArrivalHeaderStatus', 'U') IS NULL
 BEGIN
-    CREATE TABLE dbo.ArrivalHeaderStatuses
+    CREATE TABLE dbo.ArrivalHeaderStatus
     (
         ID int IDENTITY(1,1) NOT NULL,
         Code nvarchar(50) NOT NULL,
         Name nvarchar(100) NOT NULL,
         IsActive bit NOT NULL
-            CONSTRAINT DF_ArrivalHeaderStatuses_IsActive DEFAULT ((1)),
+            CONSTRAINT DF_ArrivalHeaderStatus_IsActive DEFAULT ((1)),
         SortOrder int NULL,
 
-        CONSTRAINT PK_ArrivalHeaderStatuses
+        CONSTRAINT PK_ArrivalHeaderStatus
             PRIMARY KEY CLUSTERED (ID),
 
-        CONSTRAINT UQ_ArrivalHeaderStatuses_Code
+        CONSTRAINT UQ_ArrivalHeaderStatus_Code
             UNIQUE (Code),
 
-        CONSTRAINT UQ_ArrivalHeaderStatuses_Name
+        CONSTRAINT UQ_ArrivalHeaderStatus_Name
             UNIQUE (Name)
     );
 END;
@@ -304,16 +304,16 @@ BEGIN
 END;
 
 -------------------------------------------------------------------------------
--- 10. Seed dbo.ArrivalHeaderStatuses
+-- 10. Seed dbo.ArrivalHeaderStatus
 -------------------------------------------------------------------------------
-IF OBJECT_ID('dbo.ArrivalHeaderStatuses', 'U') IS NOT NULL
+IF OBJECT_ID('dbo.ArrivalHeaderStatus', 'U') IS NOT NULL
 BEGIN
-    UPDATE dbo.ArrivalHeaderStatuses
+    UPDATE dbo.ArrivalHeaderStatus
     SET Code      = src.Code,
         Name      = src.Name,
         IsActive  = src.IsActive,
         SortOrder = src.SortOrder
-    FROM dbo.ArrivalHeaderStatuses tgt
+    FROM dbo.ArrivalHeaderStatus tgt
     INNER JOIN
     (
         SELECT 1 AS ID, N'DRAFT'     AS Code, N'Draft'     AS Name, CAST(1 AS bit) AS IsActive, 1 AS SortOrder
@@ -328,9 +328,9 @@ BEGIN
     ) src
         ON tgt.ID = src.ID;
 
-    SET IDENTITY_INSERT dbo.ArrivalHeaderStatuses ON;
+    SET IDENTITY_INSERT dbo.ArrivalHeaderStatus ON;
 
-    INSERT INTO dbo.ArrivalHeaderStatuses (ID, Code, Name, IsActive, SortOrder)
+    INSERT INTO dbo.ArrivalHeaderStatus (ID, Code, Name, IsActive, SortOrder)
     SELECT src.ID, src.Code, src.Name, src.IsActive, src.SortOrder
     FROM
     (
@@ -347,11 +347,11 @@ BEGIN
     WHERE NOT EXISTS
     (
         SELECT 1
-        FROM dbo.ArrivalHeaderStatuses tgt
+        FROM dbo.ArrivalHeaderStatus tgt
         WHERE tgt.ID = src.ID
     );
 
-    SET IDENTITY_INSERT dbo.ArrivalHeaderStatuses OFF;
+    SET IDENTITY_INSERT dbo.ArrivalHeaderStatus OFF;
 END;
 
 -------------------------------------------------------------------------------
@@ -418,16 +418,16 @@ BEGIN
 END;
 
 IF OBJECT_ID('dbo.ArrivalHeadersUnreleased', 'U') IS NOT NULL
-   AND OBJECT_ID('dbo.ArrivalHeaderStatuses', 'U') IS NOT NULL
+   AND OBJECT_ID('dbo.ArrivalHeaderStatus', 'U') IS NOT NULL
    AND NOT EXISTS
    (
        SELECT 1
        FROM sys.foreign_keys
-       WHERE name = 'FK_ArrivalHeadersUnreleased_ArrivalHeaderStatuses'
+       WHERE name = 'FK_ArrivalHeadersUnreleased_ArrivalHeaderStatus'
    )
 BEGIN
     ALTER TABLE dbo.ArrivalHeadersUnreleased
-    ADD CONSTRAINT FK_ArrivalHeadersUnreleased_ArrivalHeaderStatuses
+    ADD CONSTRAINT FK_ArrivalHeadersUnreleased_ArrivalHeaderStatus
         FOREIGN KEY (StatusID)
-        REFERENCES dbo.ArrivalHeaderStatuses (ID);
+        REFERENCES dbo.ArrivalHeaderStatus (ID);
 END;
