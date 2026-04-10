@@ -8,7 +8,7 @@
   - PartNumber per header: approx. 80% from dbo.ProductTable.PartNo
   - PartNumber per header: approx. 20% fake
   - Real PartNo values are unique within the same header
-  - Vendor is NOT sourced from dbo.ProductTable
+  - PrimairySupplier is NOT sourced from dbo.ProductTable
 ===============================================================================
 */
 
@@ -211,14 +211,17 @@ INSERT INTO dbo.ArrivalRowsUnreleased
     HeaderRecordID,
     RowSequence,
     PartNumber,
-    Vendor,
+    PrimairySupplier,
     Quantity,
     DellOwned,
     Bonded,
     Released,
     StatusID,
     Container,
-    HasComment
+    HasComment,
+    Incoming,
+    ASN,
+    MRN
 )
 SELECT
     h.ID AS ParentHeaderDbID,
@@ -236,7 +239,7 @@ SELECT
         WHEN 8 THEN N'Vendor H'
         WHEN 9 THEN N'Vendor I'
         WHEN 10 THEN N'Vendor J'
-    END AS Vendor,
+    END AS PrimairySupplier,
     CASE n.RowSequence
         WHEN 1 THEN 10
         WHEN 2 THEN 25
@@ -254,7 +257,10 @@ SELECT
     0 AS Released,
     1 AS StatusID,
     CONCAT(N'CONT-', h.SecurityReference, N'-', RIGHT(N'00' + CAST(n.RowSequence AS nvarchar(2)), 2)) AS Container,
-    0 AS HasComment
+    0 AS HasComment,
+    0 AS Incoming,
+    NULL AS ASN,
+    NULL AS MRN
 FROM HeaderSet h
 INNER JOIN RowNumbers n
     ON n.RowSequence <= h.RowsPerHeader
@@ -279,14 +285,17 @@ SELECT TOP (25)
     r.RowSequence,
     r.RowID,
     r.PartNumber,
-    r.Vendor,
+    r.PrimairySupplier,
     r.Quantity,
     r.DellOwned,
     r.Bonded,
     r.Released,
     r.StatusID,
     r.Container,
-    r.HasComment
+    r.HasComment,
+    r.Incoming,
+    r.ASN,
+    r.MRN
 FROM dbo.ArrivalRowsUnreleased r
 INNER JOIN dbo.ArrivalHeadersUnreleased h
     ON h.ID = r.ParentHeaderDbID
