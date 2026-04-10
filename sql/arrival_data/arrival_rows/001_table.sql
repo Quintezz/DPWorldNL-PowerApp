@@ -38,8 +38,12 @@ BEGIN
             AS nvarchar(30)) PERSISTED,
 
         PartNumber nvarchar(100) NULL,
-        Vendor nvarchar(100) NULL,
+        PrimairySupplier nvarchar(100) NULL,
         Quantity int NULL,
+        Incoming bit NOT NULL
+            CONSTRAINT DF_ArrivalRowsUnreleased_Incoming DEFAULT ((0)),
+        ASN nvarchar(100) NULL,
+        MRN nvarchar(100) NULL,
 
         DellOwned bit NOT NULL
             CONSTRAINT DF_ArrivalRowsUnreleased_DellOwned DEFAULT ((0)),

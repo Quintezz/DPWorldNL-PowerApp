@@ -50,8 +50,11 @@ A row may only exist if a valid parent header already exists.
 | `RowSequence` | `int NOT NULL` | Starts at 1 per header |
 | `RowID` | `nvarchar(30) NOT NULL UNIQUE` | Persisted computed row identifier |
 | `PartNumber` | `nvarchar(100)` | Part number |
-| `Vendor` | `nvarchar(100)` | Vendor name |
+| `PrimairySupplier` | `nvarchar(100)` | Primary supplier name |
 | `Quantity` | `int` | Quantity for the row |
+| `Incoming` | `bit` | Indicates incoming shipment flag |
+| `ASN` | `nvarchar(100)` | Advance Shipping Notice reference |
+| `MRN` | `nvarchar(100)` | Movement Reference Number |
 | `DellOwned` | `bit` | Indicates Dell-owned inventory |
 | `Bonded` | `bit` | Indicates bonded stock |
 | `Released` | `bit` | Release flag |
