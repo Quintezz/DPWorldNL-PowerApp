@@ -255,7 +255,12 @@ SELECT
     CASE WHEN n.RowSequence IN (1,3,5,8) THEN 1 ELSE 0 END AS DellOwned,
     CASE WHEN n.RowSequence IN (3,7,10) THEN 1 ELSE 0 END AS Bonded,
     0 AS Released,
-    1 AS StatusID,
+    CASE n.RowSequence
+        WHEN 1 THEN 4
+        WHEN 2 THEN 5
+        WHEN 3 THEN 6
+        ELSE 2
+    END AS StatusID,
     CONCAT(N'CONT-', h.SecurityReference, N'-', RIGHT(N'00' + CAST(n.RowSequence AS nvarchar(2)), 2)) AS Container,
     0 AS HasComment,
     0 AS Incoming,
